@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { Db, MongoClient } from 'mongodb';
-import { Book } from '../model/Book.js';
+import Book from '../model/Book.js';
 
 if (process.env.NODE_ENV !== 'production')
     dotenv.config();
@@ -98,14 +98,70 @@ export async function addBook(user, newBook) {
     const db = await MongoSingleton.getLibraryDB();
 
     try {
-        let userToUpdate = await db.collection("users").find(user).next();
-        userToUpdate.books.push(newBook);
-        const result = await db.collection("users").findOneAndReplace(user, userToUpdate);
+        const updater = { $push: { books: newBook } };
+        const result = await db.collection("users").findOneAndUpdate(user, updater);
         console.log(result.ok ? "Book added successfully!" : "Book not added 😭");
 
         return true;
     } catch (e) {
+        console.error(e);
+        return false;
+    }
+}
 
+/**
+ * 
+ * @param {{name: string}} user 
+ * @param {number} bookIndex 
+ * @returns 
+ */
+export async function deleteBook(user, bookIndex) {
+    const db = await MongoSingleton.getLibraryDB();
+
+    try {
+        const { books } = await db.collection("users").findOne(user);
+
+        if (bookIndex >= books.length || bookIndex < 0)
+            throw "Error deleting book from DB: Invalid book index!";
+
+        books.splice(bookIndex, 1);
+        const updater = { $set: {books: books} };
+
+        const result = await db.collection("users").findOneAndUpdate(user, updater);
+        console.log(result.ok ? "Book deleted successfully!" : "Book not deleted :(");
+
+        return true;
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
+}
+
+
+/**
+ * 
+ * @param {{name: string}} user 
+ * @param {number} bookIndex 
+ * @param {Book} updatedBook
+ * @returns 
+ */
+ export async function updateBook(user, bookIndex, updatedBook) {
+    const db = await MongoSingleton.getLibraryDB();
+
+    try {
+        const { books } = await db.collection("users").findOne(user);
+
+        if (bookIndex >= books.length || bookIndex < 0)
+            throw "Error updating book from DB: Invalid book index!";
+
+        books[bookIndex] = updatedBook;
+        const updater = { $set: {books: books} };
+
+        const result = await db.collection("users").findOneAndUpdate(user, updater);
+        console.log(result.ok ? "Book updated successfully!" : "Book not updated :(");
+
+        return true;
+    } catch (e) {
         console.error(e);
         return false;
     }
