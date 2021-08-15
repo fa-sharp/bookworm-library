@@ -1,9 +1,11 @@
 import express from "express";
 
-import { addBook, closeDBConnection, connectToDB, deleteBook, getBooks, updateBook } from "./mongodb.js";
+import { closeDBConnection, connectToDB } from "./db/mongoDB.js";
+import { addBook, deleteBook, getBooks, updateBook } from "./db/bookdb.js";
+import { addLibrary, getLibraries } from "./db/libraryDB.js";
+
 
 const PORT = process.env.PORT || 3001;
-const testUser = {name: "Bobby"};
 
 const app = express();
 app.use(express.json());
@@ -23,27 +25,33 @@ app.get('/hello', (req,res) => {
 
 /** BOOK GET/ADD/UPDATE/DELETE ROUTES */
 app.route('/books/:id?')
+    .get((req, res) => {   // Get all books
+
+        const { library } = req.body;
+
+        getBooks(library).then(books => {
+            if (books)
+                res.status(200).json({books});
+            else
+                res.status(404).json({message: `Library not found :(`})
+        }).catch(console.error);
+    })
     .post((req, res) => { // Add a book
          
-        const { book: newBook } = req.body;
+        const { library, book: newBook } = req.body;
 
-        addBook(testUser, newBook).then(success => {
+        addBook(library, newBook).then(success => {
             if (success)
                 res.status(201).json({message: `'${newBook.title}' successfully added!`});
             else
                 res.status(500).json({message: "Error adding to database :("});
         }).catch(console.error);
     })
-    .get((req, res) => {   // Get all books
-
-        getBooks(testUser).then(books => {
-            res.status(200).json({books});
-        }).catch(console.error);
-    })
     .delete((req, res) => {   // Delete a book (by index)
         const {id: bookIndex} = req.params;
+        const { library } = req.body;
 
-        deleteBook(testUser, bookIndex).then(success => {
+        deleteBook(library, bookIndex).then(success => {
             if (success)
                 res.status(200).json({message: `Book ${bookIndex} successfully deleted!`});
             else
@@ -52,15 +60,36 @@ app.route('/books/:id?')
     })
     .put((req, res) => {   // Update a book (by index)
         const { id: bookIndex } = req.params;
-        const { book: updatedBook } = req.body;
+        const { library, book: updatedBook } = req.body;
 
-        updateBook(testUser, bookIndex, updatedBook).then(success => {
+        updateBook(library, bookIndex, updatedBook).then(success => {
             if (success)
                 res.status(200).json({message: `'${updatedBook.title}' successfully updated!`});
             else
                 res.status(404).json({message: "Error updating book in database :("});
         }).catch(console.error)
+    });
+
+/** LIBRARY GET/ADD/UPDATE/DELETE ROUTES */
+app.route('/library')
+    .get((req, res) => {   // Get all libraries
+
+        getLibraries().then(libraries => {
+            res.status(200).json({libraries});
+        }).catch(console.error);
     })
+    .post((req, res) => { // Add a library
+         
+        const { library: newLibrary } = req.body;
+
+        addLibrary(newLibrary).then(success => {
+            if (success)
+                res.status(201).json({message: `Library '${newLibrary.name}' successfully added!`});
+            else
+                res.status(500).json({message: "Error adding library to database :("});
+        }).catch(console.error);
+    })
+    
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
