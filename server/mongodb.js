@@ -54,7 +54,6 @@ const MongoSingleton = (() => {
 export async function connectToDB() {
     
     const testUser = {name: "Bobby"};
-    const testBook = new Book("Clara Schumann", "Nancy Reich", 479, false);
 
     try {
         const books = await getBooks(testUser);
