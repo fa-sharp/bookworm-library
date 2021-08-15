@@ -5,7 +5,7 @@ import useBookFetch from './data/useBookFetch';
 
 function App() {
 
-    const { books, addBook, toggleBookRead } = useBookFetch();
+    const { books, addBook, deleteBook, toggleBookRead } = useBookFetch();
 
     return (
         <div className="App">
@@ -13,7 +13,11 @@ function App() {
                 <section>
                     <h2>My Library</h2>
                     {!books ? "Loading..."
-                        : <Library books={books} toggleBookRead={toggleBookRead} />}
+                        : <Library
+                            books={books} 
+                            toggleBookRead={toggleBookRead} 
+                            deleteBook={deleteBook} />}
+
                     <AddBookForm addBook={addBook} />
                 </section>
             </main>

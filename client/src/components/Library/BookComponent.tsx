@@ -5,9 +5,10 @@ import styles from './library.module.scss';
 interface Props {
     book: Book
     onChangeRead: (read: boolean) => void
+    onDeleteBook: () => void
 }
 
-const BookComponent = ({ book, onChangeRead }: Props) => {
+const BookComponent = ({ book, onChangeRead, onDeleteBook }: Props) => {
 
     const { title, author, read, numPages } = book;
 
@@ -23,6 +24,7 @@ const BookComponent = ({ book, onChangeRead }: Props) => {
                         onChange={(e) => onChangeRead(e.currentTarget.checked)}/>
                 </label>
             </small>
+            <button className={styles.deleteButton} onClick={onDeleteBook}>X</button>
         </article>
     )
 }

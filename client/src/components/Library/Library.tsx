@@ -4,10 +4,11 @@ import styles from './library.module.scss';
 
 interface LibraryProps {
     books: Book[]
+    deleteBook: (bookIndex: number) => void;
     toggleBookRead: (bookToUpdate: Book, bookIndex: number) => void;
 }
 
-const Library = ({ books, toggleBookRead }: LibraryProps) => {
+const Library = ({ books, deleteBook, toggleBookRead }: LibraryProps) => {
 
     return (
         <section className={styles.library}>
@@ -15,7 +16,8 @@ const Library = ({ books, toggleBookRead }: LibraryProps) => {
                 <BookComponent 
                     book={book}
                     key={`${book.author}${index}`}
-                    onChangeRead={(read) => toggleBookRead(book, index)} />
+                    onChangeRead={(read) => toggleBookRead(book, index)} 
+                    onDeleteBook={() => deleteBook(index)} />
             )}
         </section>
     )

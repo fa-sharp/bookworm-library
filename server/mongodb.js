@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { Db, MongoClient } from 'mongodb';
-import Book from '../model/Book.js';
+import Book from './model/Book.js';
 
 if (process.env.NODE_ENV !== 'production')
     dotenv.config();

@@ -29,6 +29,22 @@ const useBookFetch = () => {
         ).then(console.log, console.error);
     }, [books]);
 
+    const deleteBook = useCallback((bookIndex: number) => {
+        if (!books) return;
+
+        const newBooks = [...books];
+        newBooks.splice(bookIndex, 1);
+
+        setBooks(newBooks);
+
+        fetch(`/books/${bookIndex}`,
+            {
+                method: "DELETE"
+            })
+        .then(res => res.json().then(console.log))
+        .catch(err => console.error);
+    }, [books]);
+
     const toggleBookRead = useCallback((bookToUpdate: Book, bookIndex: number) => {
         if (!books) return;
 
@@ -48,7 +64,7 @@ const useBookFetch = () => {
             });
     }, [books]);
 
-    return { books, addBook, toggleBookRead }
+    return { books, addBook, deleteBook, toggleBookRead }
 }
 
 export default useBookFetch;
