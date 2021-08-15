@@ -1,48 +1,24 @@
-import { useCallback, useEffect, useState } from 'react';
-import Book from '../../model/Book'
 import './App.css';
-import Library from './components/Library';
+import Library from './components/Library/Library';
+import AddBookForm from './components/AddBookForm/AddBookForm';
+import useBookFetch from './data/useBookFetch';
 
 function App() {
 
-  const [books, setBooks] = useState<Book[]>();
+    const { books, addBook, toggleBookRead } = useBookFetch();
 
-  useEffect(() => {
-    fetch("/books")
-      .then((res) => res.json())
-      .then((data) => setBooks(data.books));
-  }, []);
-
-  const toggleBookRead = useCallback((bookToUpdate: Book, bookIndex: number) => {
-    if (!books) return;
-
-    bookToUpdate.read = !bookToUpdate.read;
-    const newBooks = [...books];
-    newBooks[bookIndex] = bookToUpdate;
-
-    setBooks(newBooks);
-  
-    fetch(`/books/${bookIndex}`,
-      {
-        method: "PUT",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ book: bookToUpdate })
-      });
-  }, [books]);
-
-  return (
-    <div className="App">
-      <main>
-        <section>
-            <h2>My Library</h2>
-            {!books ? "Loading..."
-                  : <Library books={books} toggleBookRead={toggleBookRead} />}
-          </section>
-      </main>
-    </div>
-  );
+    return (
+        <div className="App">
+            <main>
+                <section>
+                    <h2>My Library</h2>
+                    {!books ? "Loading..."
+                        : <Library books={books} toggleBookRead={toggleBookRead} />}
+                    <AddBookForm addBook={addBook} />
+                </section>
+            </main>
+        </div>
+    );
 }
 
 

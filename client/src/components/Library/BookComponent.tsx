@@ -1,5 +1,5 @@
-import Book from "../../../model/Book";
-import styles from './style.module.scss';
+import Book from "../../model/Book";
+import styles from './library.module.scss';
 
 
 interface Props {

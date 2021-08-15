@@ -1,6 +1,6 @@
-import Book from "../../../model/Book";
+import Book from "../../model/Book";
 import BookComponent from "./BookComponent";
-import styles from './style.module.scss';
+import styles from './library.module.scss';
 
 interface LibraryProps {
     books: Book[]
