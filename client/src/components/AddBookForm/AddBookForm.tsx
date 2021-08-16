@@ -3,7 +3,9 @@ import Book from '../../model/Book';
 import styles from './addBookForm.module.scss'
 
 interface AddBookFormProps {
+    show: boolean;
     addBook: (book: any) => void;
+    closeAddBookForm: () => void;
 }
 
 interface BookFormValues {
@@ -15,8 +17,8 @@ interface BookFormValues {
 
 const initialValues: BookFormValues = {title: '', author: '', numPages: '', read: false};
 
-const AddBookForm = ({ addBook }: AddBookFormProps) => (
-    <div className={styles.formContainer}>
+const AddBookForm = ({ show, addBook, closeAddBookForm }: AddBookFormProps) => (
+    <div className={styles.formContainer + (show ? ` ${styles.show}` : '')}>
         <Formik
             initialValues={initialValues}
             validate={values => {
@@ -40,6 +42,7 @@ const AddBookForm = ({ addBook }: AddBookFormProps) => (
                     addBook(new Book(values.title, values.author, Number(values.numPages), values.read));
                     resetForm();
                     setSubmitting(false);
+                    closeAddBookForm();
                 }, 400);
             }}
         >
@@ -62,6 +65,9 @@ const AddBookForm = ({ addBook }: AddBookFormProps) => (
                     
                     <button type="submit" disabled={isSubmitting}>
                         Add
+                    </button>
+                    <button type="reset" disabled={isSubmitting} onClick={closeAddBookForm}>
+                        Cancel
                     </button>
                 </Form>
             )}

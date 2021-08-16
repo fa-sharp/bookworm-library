@@ -1,13 +1,30 @@
 .library {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: center;
 
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 10px;
 
     background-color: #c59f91;
+
+
+    .addBookButton {
+        all: unset;
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+
+        width: 2rem;
+        height: 2rem;
+
+        font-size: 2rem;
+        color: black;
+
+        cursor: pointer;
+    }
 }
 
 .book {
@@ -25,10 +42,11 @@
     border-radius: 10px;
     box-shadow: 4px 4px 3px 1px;
 
-    margin: .8rem;
+    margin: calc(min(2%, 16px));
     padding: 4px;
 
     background-color: #ffe082;
+    transition: background-color .5s ease;
 
     &.read {
         background-color: #d2d2d2;

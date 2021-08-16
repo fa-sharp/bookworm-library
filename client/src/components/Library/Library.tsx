@@ -6,9 +6,10 @@ interface LibraryProps {
     books: Book[]
     deleteBook: (bookIndex: number) => void;
     toggleBookRead: (bookToUpdate: Book, bookIndex: number) => void;
+    onClickAddBook: () => void
 }
 
-const Library = ({ books, deleteBook, toggleBookRead }: LibraryProps) => {
+const Library = ({ books, deleteBook, toggleBookRead, onClickAddBook }: LibraryProps) => {
 
     return (
         <section className={styles.library}>
@@ -19,6 +20,9 @@ const Library = ({ books, deleteBook, toggleBookRead }: LibraryProps) => {
                     onChangeRead={(read) => toggleBookRead(book, index)} 
                     onDeleteBook={() => deleteBook(index)} />
             )}
+            <button onClick={onClickAddBook} className={styles.addBookButton}>
+                <i className="far fa-plus-square"></i>
+            </button>
         </section>
     )
 }

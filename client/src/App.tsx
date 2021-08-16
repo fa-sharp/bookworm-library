@@ -19,6 +19,8 @@ function App() {
     // get the books from the database, as well as methods to add/delete/update them
     const { books, addBook, deleteBook, toggleBookRead } = useBookFetch(currentLibrary);
 
+    const [showAddForm, setShowAddForm] = useState(false);
+
     return (
         <div className="App">
             <main>
@@ -35,9 +37,13 @@ function App() {
                         : <Library
                             books={books} 
                             toggleBookRead={toggleBookRead} 
-                            deleteBook={deleteBook} />}
+                            deleteBook={deleteBook}
+                            onClickAddBook={() => setShowAddForm(true)} />}
 
-                    <AddBookForm addBook={addBook} />
+                    <AddBookForm
+                        show={showAddForm}
+                        addBook={addBook}
+                        closeAddBookForm={() => setShowAddForm(false)} />
                 </section>
             </main>
         </div>
