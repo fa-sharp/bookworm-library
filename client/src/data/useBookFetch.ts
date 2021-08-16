@@ -2,23 +2,23 @@ import { useCallback, useEffect, useState } from "react";
 import Book from "../model/Book";
 
 
-const useBookFetch = () => {
+const useBookFetch = (libName: string) => {
 
     const [books, setBooks] = useState<Book[]>();
 
     useEffect(() => {
-        fetch("/books")
-            .then((res) => res.json())
-            .then((data) => setBooks(data.books))
-            .catch(console.error);
-    }, []);
+        fetch(`/books/${libName}`)
+        .then((res) => res.json())
+        .then((data) => setBooks(data.books))
+        .catch(console.error);
+    }, [libName]);
 
     const addBook = useCallback((book: Book) => {
         if (!books) return;
 
         setBooks([...books, book]);
 
-        fetch("/books",
+        fetch(`/books/${libName}`,
             {
                 method: "POST",
                 headers: {
@@ -26,8 +26,9 @@ const useBookFetch = () => {
                 },
                 body: JSON.stringify({ book })
             }
-        ).then(console.log, console.error);
-    }, [books]);
+        ).then(res => res.json().then(console.log))
+        .catch(err => console.error);
+    }, [books, libName]);
 
     const deleteBook = useCallback((bookIndex: number) => {
         if (!books) return;
@@ -37,13 +38,13 @@ const useBookFetch = () => {
 
         setBooks(newBooks);
 
-        fetch(`/books/${bookIndex}`,
+        fetch(`/books/${libName}/${bookIndex}`,
             {
                 method: "DELETE"
             })
         .then(res => res.json().then(console.log))
         .catch(err => console.error);
-    }, [books]);
+    }, [books, libName]);
 
     const toggleBookRead = useCallback((bookToUpdate: Book, bookIndex: number) => {
         if (!books) return;
@@ -54,15 +55,17 @@ const useBookFetch = () => {
 
         setBooks(newBooks);
 
-        fetch(`/books/${bookIndex}`,
+        fetch(`/books/${libName}/${bookIndex}`,
             {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ book: bookToUpdate })
-            });
-    }, [books]);
+            })
+        .then(res => res.json().then(console.log))
+        .catch(err => console.error);
+    }, [books, libName]);
 
     return { books, addBook, deleteBook, toggleBookRead }
 }

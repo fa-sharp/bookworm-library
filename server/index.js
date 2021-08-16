@@ -24,12 +24,12 @@ app.get('/hello', (req,res) => {
 })
 
 /** BOOK GET/ADD/UPDATE/DELETE ROUTES */
-app.route('/books/:id?')
+app.route('/books/:libName/:id?')
     .get((req, res) => {   // Get all books
 
-        const { library } = req.body;
+        const { libName } = req.params;
 
-        getBooks(library).then(books => {
+        getBooks({name: libName}).then(books => {
             if (books)
                 res.status(200).json({books});
             else
@@ -38,9 +38,10 @@ app.route('/books/:id?')
     })
     .post((req, res) => { // Add a book
          
-        const { library, book: newBook } = req.body;
+        const { libName } = req.params;
+        const { book: newBook } = req.body;
 
-        addBook(library, newBook).then(success => {
+        addBook({name: libName}, newBook).then(success => {
             if (success)
                 res.status(201).json({message: `'${newBook.title}' successfully added!`});
             else
@@ -48,10 +49,9 @@ app.route('/books/:id?')
         }).catch(console.error);
     })
     .delete((req, res) => {   // Delete a book (by index)
-        const {id: bookIndex} = req.params;
-        const { library } = req.body;
+        const {id: bookIndex, libName } = req.params;
 
-        deleteBook(library, bookIndex).then(success => {
+        deleteBook({name: libName}, bookIndex).then(success => {
             if (success)
                 res.status(200).json({message: `Book ${bookIndex} successfully deleted!`});
             else
@@ -59,10 +59,10 @@ app.route('/books/:id?')
         }).catch(console.error);
     })
     .put((req, res) => {   // Update a book (by index)
-        const { id: bookIndex } = req.params;
-        const { library, book: updatedBook } = req.body;
+        const { id: bookIndex, libName } = req.params;
+        const { book: updatedBook } = req.body;
 
-        updateBook(library, bookIndex, updatedBook).then(success => {
+        updateBook({name: libName}, bookIndex, updatedBook).then(success => {
             if (success)
                 res.status(200).json({message: `'${updatedBook.title}' successfully updated!`});
             else
