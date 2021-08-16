@@ -15,6 +15,7 @@ process.on('SIGINT', function() {
     closeDBConnection().then(() => process.exit());
 });
 
+// Test connection to MongoDB
 connectToDB().catch(console.error);
 
 app.get('/hello', (req,res) => {

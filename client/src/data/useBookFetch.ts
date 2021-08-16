@@ -2,11 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import Book from "../model/Book";
 
 
-const useBookFetch = (libName: string) => {
+const useBookFetch = (libName: string | null) => {
 
     const [books, setBooks] = useState<Book[]>();
 
     useEffect(() => {
+        if (!libName)
+            return;
+
         fetch(`/books/${libName}`)
         .then((res) => res.json())
         .then((data) => setBooks(data.books))
