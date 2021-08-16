@@ -8,14 +8,15 @@ import { useEffect } from 'react';
 
 function App() {
 
-    const { libraries } = useLibraryFetch();
+    const { libraries } = useLibraryFetch(); // get libraries from database
 
-    const [currentLibrary, setCurrentLibrary] = useState<string | null>(null);
-    useEffect(() => { // once libraries are loaded, load the first library by default
+    const [currentLibrary, setCurrentLibrary] = useState<string | null>(null); // the library currently in view
+    useEffect(() => { // once libraries are loaded, view the first library by default
         if (libraries)
             setCurrentLibrary(libraries[0]);
     }, [libraries]);
 
+    // get the books from the database, as well as methods to add/delete/update them
     const { books, addBook, deleteBook, toggleBookRead } = useBookFetch(currentLibrary);
 
     return (
