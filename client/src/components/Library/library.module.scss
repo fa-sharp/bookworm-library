@@ -8,17 +8,14 @@
     padding: 10px;
     border-radius: 10px;
 
-    background-color: #c59f91;
+    background-color: #bcaaa4;
 
 
     .addBookButton {
         all: unset;
         position: absolute;
-        bottom: 1rem;
+        bottom: .3rem;
         right: 1rem;
-
-        width: 2rem;
-        height: 2rem;
 
         font-size: 2rem;
         color: black;
@@ -50,6 +47,11 @@
 
     &.read {
         background-color: #d2d2d2;
+    }
+
+    h3 {
+        margin-block: 0;
+        font-size: 1rem;
     }
 
     .readField {

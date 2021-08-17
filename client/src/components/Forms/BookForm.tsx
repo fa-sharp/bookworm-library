@@ -1,10 +1,10 @@
 import { Formik, Form, Field, ErrorMessage, FormikErrors } from 'formik';
 import Book from '../../model/Book';
-import styles from './addBookForm.module.scss'
+import styles from './forms.module.scss'
 
-interface AddBookFormProps {
+interface BookFormProps {
     show: boolean;
-    addBook: (book: any) => void;
+    addBook: (book: Book) => void;
     closeAddBookForm: () => void;
 }
 
@@ -17,7 +17,7 @@ interface BookFormValues {
 
 const initialValues: BookFormValues = {title: '', author: '', numPages: '', read: false};
 
-const AddBookForm = ({ show, addBook, closeAddBookForm }: AddBookFormProps) => (
+const BookForm = ({ show, addBook, closeAddBookForm }: BookFormProps) => (
     <div className={styles.formContainer + (show ? ` ${styles.show}` : '')}>
         <Formik
             initialValues={initialValues}
@@ -48,6 +48,8 @@ const AddBookForm = ({ show, addBook, closeAddBookForm }: AddBookFormProps) => (
         >
             {({ isSubmitting }) => (
                 <Form className={styles.form}>
+                     <h3>Add a book 📖</h3>
+
                     <Field name="title" type="text" placeholder="Title" className={styles.field} />
                     <ErrorMessage name="title" component="div" className={styles.error} />
 
@@ -75,4 +77,4 @@ const AddBookForm = ({ show, addBook, closeAddBookForm }: AddBookFormProps) => (
     </div>
 );
 
-export default AddBookForm;
+export default BookForm;

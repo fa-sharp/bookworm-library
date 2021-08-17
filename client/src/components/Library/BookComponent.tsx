@@ -14,9 +14,9 @@ const BookComponent = ({ book, onChangeRead, onDeleteBook }: Props) => {
 
     return (
         <article className={styles.book + (read ? ` ${styles.read}` : '')}>
-            <b>{title}</b>
-            {author}
-            <small>{numPages} pages</small>
+            <h3>{title}</h3>
+            <div aria-label="Author">{author}</div>
+            <small>{`${numPages} pages`}</small>
             <small>
                 <label className={styles.readField}>
                     Read:
@@ -24,7 +24,7 @@ const BookComponent = ({ book, onChangeRead, onDeleteBook }: Props) => {
                         onChange={(e) => onChangeRead(e.currentTarget.checked)}/>
                 </label>
             </small>
-            <button className={styles.deleteButton} onClick={onDeleteBook}>X</button>
+            <button className={styles.deleteButton} onClick={onDeleteBook} aria-label="Delete book">X</button>
         </article>
     )
 }

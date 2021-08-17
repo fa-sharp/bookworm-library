@@ -4,11 +4,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 99;
 
-    background: hsla(0, 0%, 100%, 0.4);
+    background: hsla(0, 0%, 100%, 0.6);
     backdrop-filter: blur(3px);
     visibility: hidden;
     opacity: 0;
+    
 
     transition: opacity 0.4s linear;
 
@@ -37,5 +39,9 @@
         color: red;
         font-size: .85rem;
         margin-block: 0px;
+    }
+
+    button {
+        margin-inline: 4px;
     }
 }

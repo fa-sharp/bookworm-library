@@ -16,11 +16,12 @@ const Library = ({ books, deleteBook, toggleBookRead, onClickAddBook }: LibraryP
             {books.map((book, index) =>
                 <BookComponent 
                     book={book}
-                    key={`${book.author}${index}`}
+                    key={`${book.author}${book.title}`}
                     onChangeRead={(read) => toggleBookRead(book, index)} 
                     onDeleteBook={() => deleteBook(index)} />
             )}
-            <button onClick={onClickAddBook} className={styles.addBookButton}>
+            {books.length === 0 && "No books yet! Add one now ===>"}
+            <button onClick={onClickAddBook} className={styles.addBookButton} aria-label="Add a book" title="Add a book">
                 <i className="far fa-plus-square"></i>
             </button>
         </section>
