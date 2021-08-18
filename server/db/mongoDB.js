@@ -23,7 +23,7 @@ export const MongoSingleton = (() => {
 
     /**
      * 
-     * @returns {Promise<Db>} The library database
+     * @returns {Promise<Db>} The library app database
      */
     async function getLibraryDB() {
         if (isInitialized()) return _db;

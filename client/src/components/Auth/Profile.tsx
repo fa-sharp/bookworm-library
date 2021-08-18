@@ -6,11 +6,12 @@ const Profile = () => {
     if (!user || !isAuthenticated)
         return null;
     
-    const { name, picture } = user;
+    const { nickname, name, picture } = user;
 
     return (
         <div>
-            <img src={picture} alt={name} title={`${name} logged in!`} />
+            <img src={picture} alt={`${nickname || name} logged in!`} 
+                title={`${nickname || name} logged in!`} />
         </div>
     )
 }

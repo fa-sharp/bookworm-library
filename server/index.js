@@ -2,8 +2,7 @@ import express from "express";
 import path from "path";
 
 import { closeDBConnection, connectToDB } from "./db/mongoDB.js";
-import createBookRoutes from "./routes/bookRoutes.js";
-import createLibraryRoutes from "./routes/libraryRoutes.js";
+import { userRoutes, libraryRoutes, bookRoutes } from "./routes"
 
 
 const PORT = process.env.PORT || 3001;
@@ -22,9 +21,10 @@ process.on('SIGINT', function() {
 // Test connection to MongoDB
 connectToDB().catch(console.error);
 
-// Create API routes
-createBookRoutes(app);
-createLibraryRoutes(app);
+// Create API routes'
+userRoutes(app);
+bookRoutes(app);
+libraryRoutes(app);
 
 // Create static client route
 app.get('/', (req, res) => {

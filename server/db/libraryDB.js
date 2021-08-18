@@ -1,19 +1,25 @@
-import { LIB_COLLECTION, MongoSingleton } from "./mongoDB.js";
+import { MongoSingleton } from "./mongoDB.js";
+import Library from "../model/Library.js";
 
-export async function getLibraries() {
+const USER_COLLECTION = 'users';
+
+/**
+ * 
+ * @param {string} authId The unique (hopefully) ID corresponding to the auth0 authentication
+ * @returns {Promise<Library[] | null>}
+ */
+export async function getLibraries(authId) {
 
     const db = await MongoSingleton.getLibraryDB();
-    let libraries = [];
 
     try {
-        let foundLibraries = db.collection(LIB_COLLECTION)
-                                    .find()
-                                    .map(doc => doc.name);
-        libraries = await foundLibraries.toArray();
+        const { libraries } = await db.collection(USER_COLLECTION)
+                                    .findOne({authId});
+        return libraries;
     } catch (e) {
         console.error(e);
+        return null;
     }
-    return libraries;
 }
 
 export async function addLibrary(library) {
@@ -21,7 +27,7 @@ export async function addLibrary(library) {
     const db = await MongoSingleton.getLibraryDB();
 
     try {
-        const result = await db.collection(LIB_COLLECTION).insertOne(library);
+        const result = await db.collection(USER_COLLECTION).insertOne(library);
         if (result.acknowledged) {
             console.log("Library added successfully!");
             return true;

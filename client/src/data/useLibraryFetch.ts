@@ -1,17 +1,36 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import { useCallback, useEffect, useState } from "react";
 import Library from "../model/Library";
 
 
 const useLibraryFetch = () => {
 
+    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+
     const [libraries, setLibraries] = useState<string[]>();
+    
 
     useEffect(() => {
-        fetch('/library')
-        .then((res) => res.json())
-        .then((data) => setLibraries(data.libraries))
-        .catch(console.error);
-    }, []);
+        if (!isAuthenticated)
+            return;
+
+        const fetchLibraries = async () => {
+            try {
+                const token = await getAccessTokenSilently();
+                const response = await fetch('/library', {
+                    headers: { Authorization: `Bearer ${token}`}
+                });
+
+                const { libraries } = await response.json();
+                setLibraries(libraries);
+            } 
+            catch (err) {
+                console.log(err);
+            }
+        }
+
+        fetchLibraries();
+    }, [getAccessTokenSilently, isAuthenticated]);
 
     const addLibrary = useCallback((library: Library) => {
         if (!libraries)

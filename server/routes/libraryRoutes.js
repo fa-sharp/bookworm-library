@@ -1,14 +1,25 @@
 import { addLibrary, getLibraries } from "../db/libraryDB.js";
+import { validateJWT } from "../auth/auth0.js";
 
+/**
+ * @param {Express} app
+ */
 export default (app) => {
 
     app.route('/library')
 
-        // Get all libraries
-        .get((req, res) => {   
+        // Authenticate
+        .all(validateJWT)
 
-            getLibraries().then(libraries => {
-                res.status(200).json({libraries});
+        // Get all libraries
+        .get((req, res) => {
+            const { sub } = req.user; 
+            getLibraries(sub).then(libraries => {
+                if (libraries)
+                    res.status(200).json({libraries});
+                else {
+                    res.status(404).json({message: "Couldn't find user 😭"});
+                }
             }).catch(console.error);
         })
 
