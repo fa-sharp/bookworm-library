@@ -1,0 +1,12 @@
+.header {
+    --header-size: 2rem;
+
+    display: flex;
+    justify-content: flex-end;
+    height: var(--header-size);
+    background-color: rgb(72, 72, 72);
+
+    img {
+        height: var(--header-size);
+    }
+}

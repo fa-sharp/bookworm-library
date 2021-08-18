@@ -1,12 +1,12 @@
 import './App.css';
+import { useState, useEffect } from 'react';
+
 import Library from './components/Library/Library';
-import BookForm from './components/Forms/BookForm';
-import LibraryForm from './components/Forms/LibraryForm';
+import { BookForm, LibraryForm } from './components/Forms';
+
 import useBookFetch from './data/useBookFetch';
 import useLibraryFetch from './data/useLibraryFetch';
-import { useState } from 'react';
-import { useEffect } from 'react';
-
+import Header from './components/Nav/Header';
 
 function App() {
 
@@ -28,6 +28,7 @@ function App() {
 
     return (
         <div className="App">
+            <Header />
             <main>
                 <BookForm
                     show={showBookForm}
@@ -56,6 +57,7 @@ function App() {
                         toggleBookRead={toggleBookRead}
                         deleteBook={deleteBook}
                         onClickAddBook={() => setShowBookForm(true)} />}
+                
             </main>
         </div>
     );
