@@ -22,12 +22,14 @@ export async function getLibraries(authId) {
     }
 }
 
-export async function addLibrary(library) {
+export async function addLibrary(authId, newLibrary) {
 
     const db = await MongoSingleton.getLibraryDB();
 
     try {
-        const result = await db.collection(USER_COLLECTION).insertOne(library);
+        const result = await db.collection(USER_COLLECTION).updateOne(
+            { authId }, { $push: { libraries: newLibrary } }
+        );
         if (result.acknowledged) {
             console.log("Library added successfully!");
             return true;

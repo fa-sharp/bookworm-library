@@ -3,10 +3,6 @@ import User from "../model/User.js";
 
 const USER_COLLECTION = 'users';
 
-/**
- * 
- * @param authUser The auth0 user object
- */
 export async function getUser(authId) {
 
     const db = await MongoSingleton.getLibraryDB();
@@ -20,10 +16,7 @@ export async function getUser(authId) {
     }
 }
 
-/**
- * 
- * @param authUser The auth0 user object
- */
+
 export async function addUser(authId) {
 
     const db = await MongoSingleton.getLibraryDB();

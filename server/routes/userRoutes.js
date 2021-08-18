@@ -11,6 +11,7 @@ export default (app) => {
         // Get user, or add to database if not found
         .get((req, res) => {
             const { sub: authId } = req.user;
+            
             getUser(authId).then(foundUser => {
                 if (foundUser)
                     res.status(200).json({user: foundUser});

@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 
 import { closeDBConnection, connectToDB } from "./db/mongoDB.js";
-import { userRoutes, libraryRoutes, bookRoutes } from "./routes"
+import { userRoutes, libraryRoutes, bookRoutes } from "./routes/index.js"
 
 
 const PORT = process.env.PORT || 3001;
@@ -13,6 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'client/build')));
 
+// Close MongoDB connection on exit
 process.on('SIGINT', function() {
     console.log('Closing database connection..');
     closeDBConnection().then(() => process.exit());
@@ -21,7 +22,7 @@ process.on('SIGINT', function() {
 // Test connection to MongoDB
 connectToDB().catch(console.error);
 
-// Create API routes'
+// Create API routes
 userRoutes(app);
 bookRoutes(app);
 libraryRoutes(app);

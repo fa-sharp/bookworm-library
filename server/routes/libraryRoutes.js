@@ -6,29 +6,30 @@ import { validateJWT } from "../auth/auth0.js";
  */
 export default (app) => {
 
-    app.route('/library')
+    app.route('/api/library')
 
         // Authenticate
         .all(validateJWT)
 
-        // Get all libraries
-        .get((req, res) => {
-            const { sub } = req.user; 
-            getLibraries(sub).then(libraries => {
-                if (libraries)
-                    res.status(200).json({libraries});
-                else {
-                    res.status(404).json({message: "Couldn't find user 😭"});
-                }
-            }).catch(console.error);
-        })
+        // Get all libraries (not needed?)
+        // .get((req, res) => {
+        //     const { sub } = req.user; 
+        //     getLibraries(sub).then(libraries => {
+        //         if (libraries)
+        //             res.status(200).json({libraries});
+        //         else {
+        //             res.status(404).json({message: "Couldn't find user 😭"});
+        //         }
+        //     }).catch(console.error);
+        // })
 
         // Add a library
         .post((req, res) => { 
             
+            const { sub } = req.user;
             const { library: newLibrary } = req.body;
 
-            addLibrary(newLibrary).then(success => {
+            addLibrary(sub, newLibrary).then(success => {
                 if (success)
                     res.status(201).json({message: `Library '${newLibrary.name}' successfully added!`});
                 else
