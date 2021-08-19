@@ -8,7 +8,7 @@ interface Props {
     onDeleteBook: () => void
 }
 
-const BookComponent = ({ book, onChangeRead, onDeleteBook }: Props) => {
+const BookView = ({ book, onChangeRead, onDeleteBook }: Props) => {
 
     const { title, author, read, numPages } = book;
 
@@ -29,4 +29,4 @@ const BookComponent = ({ book, onChangeRead, onDeleteBook }: Props) => {
     )
 }
 
-export default BookComponent;
+export default BookView;

@@ -1,5 +1,5 @@
 import Book from "../../model/Book";
-import BookComponent from "./BookComponent";
+import BookView from "./BookView";
 import styles from './library.module.scss';
 
 interface LibraryProps {
@@ -9,12 +9,12 @@ interface LibraryProps {
     onClickAddBook: () => void
 }
 
-const Library = ({ books, deleteBook, toggleBookRead, onClickAddBook }: LibraryProps) => {
+const LibraryView = ({ books, deleteBook, toggleBookRead, onClickAddBook }: LibraryProps) => {
 
     return (
         <section className={styles.library}>
             {books.map((book, index) =>
-                <BookComponent 
+                <BookView 
                     book={book}
                     key={`${book.author}${book.title}`}
                     onChangeRead={(read) => toggleBookRead(book, index)} 
@@ -28,4 +28,4 @@ const Library = ({ books, deleteBook, toggleBookRead, onClickAddBook }: LibraryP
     )
 }
 
-export default Library
+export default LibraryView

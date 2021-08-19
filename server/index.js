@@ -13,14 +13,14 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'client/build')));
 
+// Test connection to MongoDB
+connectToDB().catch(console.error);
+
 // Close MongoDB connection on exit
 process.on('SIGINT', function() {
     console.log('Closing database connection..');
     closeDBConnection().then(() => process.exit());
 });
-
-// Test connection to MongoDB
-connectToDB().catch(console.error);
 
 // Create API routes
 userRoutes(app);
