@@ -1,3 +1,5 @@
+import Library from "./Library.js";
+
 export default class User {
 
     /**
@@ -7,11 +9,12 @@ export default class User {
      */
     constructor(authId) {
 
+        this._id = null;
         this.authId = authId;
         this.createdTime = new Date();
         
         this.libraries = [
-            { name: "My Library", books: [] }
+            new Library("My Library")
         ]
     }
 }

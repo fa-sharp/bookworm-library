@@ -26,9 +26,11 @@ export async function addUser(authId) {
         const newUser = new User(authId);
         const result = await db.collection(USER_COLLECTION).insertOne(newUser);
 
-        return result.acknowledged ? newUser : null;
-        
+        if (result.acknowledged)
+            return { _id: result.insertedId.toHexString(), ...newUser }
+        else
+            throw new Error("Failed to add user to database!");
     } catch (e) {
-        throw new Error("Failed to add user to database!");
+        console.error(e);
     }
 }

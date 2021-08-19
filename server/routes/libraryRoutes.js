@@ -1,4 +1,4 @@
-import { addLibrary, getLibraries } from "../db/libraryDB.js";
+import { addLibrary, deleteLibrary, getLibraries, updateLibraryName } from "../db/libraryDB.js";
 import { validateJWT } from "../auth/auth0.js";
 
 /**
@@ -11,29 +11,44 @@ export default (app) => {
         // Authenticate
         .all(validateJWT)
 
-        // Get all libraries (not needed?)
-        // .get((req, res) => {
-        //     const { sub } = req.user; 
-        //     getLibraries(sub).then(libraries => {
-        //         if (libraries)
-        //             res.status(200).json({libraries});
-        //         else {
-        //             res.status(404).json({message: "Couldn't find user 😭"});
-        //         }
-        //     }).catch(console.error);
-        // })
-
         // Add a library
         .post((req, res) => { 
             
             const { sub } = req.user;
-            const { library: newLibrary } = req.body;
+            const { library } = req.body;
 
-            addLibrary(sub, newLibrary).then(success => {
-                if (success)
-                    res.status(201).json({message: `Library '${newLibrary.name}' successfully added!`});
+            addLibrary(sub, library).then(newLibrary => {
+                if (newLibrary)
+                    res.status(201).json({library: newLibrary, message: `Library '${newLibrary.name}' successfully added!`});
                 else
                     res.status(500).json({message: "Error adding library to database :("});
+            }).catch(console.error);
+        })
+
+        // Delete a library
+        .delete((req, res) => {
+
+            const { sub } = req.user;
+            const { library } = req.body;
+
+            deleteLibrary(sub, library).then(success => {
+                if (success)
+                    res.status(200).json({message: `Library '${library.name}' with id ${library._id} successfully deleted!`});
+                else
+                    res.status(500).json({message: "Error deleting library from database :("});
+            }).catch(console.error);
+        })
+
+        // Update a library name
+        .put((req, res) => {
+            const { sub } = req.user;
+            const { library } = req.body;
+
+            updateLibraryName(sub, library).then(success => {
+                if (success)
+                    res.status(200).json({message: `Library with id '${library._id}' successfully updated to new name '${library.name}'!`});
+                else
+                    res.status(500).json({message: "Error updating library in database :("});
             }).catch(console.error);
         })
 }
