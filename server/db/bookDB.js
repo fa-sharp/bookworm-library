@@ -1,99 +1,86 @@
-import { LIB_COLLECTION, MongoSingleton } from "./mongoDB.js";
+import { MongoSingleton, USER_COLLECTION } from "./mongoDB.js";
 import Book from '../model/Book.js';
-
-
-/**
- * 
- * @param {{name: string}} library 
- * @return {Promise<Book[] | null>}
- */
- export async function getBooks(library) {
-
-    const db = await MongoSingleton.getLibraryDB();
-    let books = null;
-
-    try {
-        let retrievedUser = await db.collection(LIB_COLLECTION).find(library).next();
-        books = retrievedUser.books;
-    } catch (e) {
-        console.error(e);
-    }
-    return books;
-}
+import { ObjectId } from "mongodb";
 
 /**
+ * @param authId The auth0 id of the user
+ * @param {{_id: string}} library the library to add to (only need _id)
+ * @param {Book} book the book to add (_id will be added)
  * 
- * @param {{name: string}} library 
- * @param {Book} newBook 
+ * @returns {Promise<Book | null>} the new book, with added _id, or null if there was a DB error
  */
-export async function addBook(library, newBook) {
+export async function addBook(authId, library, book) {
 
     const db = await MongoSingleton.getLibraryDB();
+    const newBook = { _id: ObjectId(), ...book };
 
     try {
-        const updater = { $push: { books: newBook } };
-        const result = await db.collection(LIB_COLLECTION).findOneAndUpdate(library, updater);
-        console.log(result.ok ? "Book added successfully!" : "Book not added 😭");
-
-        return true;
+        const filter = { authId, "libraries._id": ObjectId(library._id) };
+        const updater = { $push: { "libraries.$.books": newBook } };
+        const result = await db.collection(USER_COLLECTION).updateOne(filter, updater);
+        
+        if (result.acknowledged && result.modifiedCount === 1) {
+            console.log("Book added successfully!");
+            return newBook;
+        } else
+            throw "Error adding book :(";
     } catch (e) {
         console.error(e);
-        return false;
+        return null;
     }
 }
 
 /**
  * 
- * @param {{name: string}} library 
- * @param {number} bookIndex 
- * @returns 
+ * @param authId The auth0 id of the user
+ * @param {{_id: string}} library the library to delete from (only need _id)
+ * @param {{_id: string}} book the book to delete (only need _id)
+ * 
  */
-export async function deleteBook(library, bookIndex) {
+export async function deleteBook(authId, library, book) {
     const db = await MongoSingleton.getLibraryDB();
 
     try {
-        const { books } = await db.collection(LIB_COLLECTION).findOne(library);
+        const filter = { authId, "libraries._id": ObjectId(library._id) };
+        const updater = { $pull: { "libraries.$.books": { _id: ObjectId(book._id) } } };
+        const result = await db.collection(USER_COLLECTION).updateOne(filter, updater);
 
-        if (bookIndex >= books.length || bookIndex < 0)
-            throw "Error deleting book from DB: Invalid book index!";
-
-        books.splice(bookIndex, 1);
-        const updater = { $set: {books: books} };
-
-        const result = await db.collection(LIB_COLLECTION).findOneAndUpdate(library, updater);
-        console.log(result.ok ? "Book deleted successfully!" : "Book not deleted :(");
-
-        return true;
+        if (result.acknowledged && result.modifiedCount === 1) {
+            console.log("Book deleted successfully!");
+            return true;
+        }
+        else
+            throw "Error deleting book :(";
     } catch (e) {
         console.error(e);
         return false;
     }
 }
 
-
 /**
  * 
- * @param {{name: string}} library 
- * @param {number} bookIndex 
- * @param {Book} updatedBook
+ * @param authId The auth0 id of the user
+ * @param {{_id: string}} library the library to update from (only need _id)
+ * @param {Book} book the book to update (same _id but updated fields)
  * @returns 
  */
- export async function updateBook(library, bookIndex, updatedBook) {
+ export async function updateBook(authId, library, book) {
     const db = await MongoSingleton.getLibraryDB();
+    const updatedBook = {  ...book, _id: ObjectId(book._id)};
 
     try {
-        const { books } = await db.collection(LIB_COLLECTION).findOne(library);
+        const filter = { authId };
+        const updater = { $set: { "libraries.$[l].books.$[b]": updatedBook } };
+        const options = { arrayFilters: [ { "l._id": ObjectId(library._id) } , { "b._id": updatedBook._id } ] }
 
-        if (bookIndex >= books.length || bookIndex < 0)
-            throw "Error updating book from DB: Invalid book index!";
+        const result = await db.collection(USER_COLLECTION).updateOne(filter, updater, options);
 
-        books[bookIndex] = updatedBook;
-        const updater = { $set: {books: books} };
-
-        const result = await db.collection(LIB_COLLECTION).findOneAndUpdate(library, updater);
-        console.log(result.ok ? "Book updated successfully!" : "Book not updated :(");
-
-        return true;
+        if (result.acknowledged && result.modifiedCount === 1) {
+            console.log(`Book ${book.title} updated successfully!`);
+            return true;
+        }
+        else
+            throw "Error updating book :(";
     } catch (e) {
         console.error(e);
         return false;

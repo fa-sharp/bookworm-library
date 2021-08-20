@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { Db, MongoClient } from 'mongodb';
-import { getBooks } from './bookDB.js';
 
 if (process.env.NODE_ENV !== 'production')
     dotenv.config();
@@ -11,7 +10,7 @@ const DB_NAME = process.env.DB_NAME;
 
 const uri = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.lue6u.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
 
-export const LIB_COLLECTION = "libraries";
+export const USER_COLLECTION = "users";
 
 export const MongoSingleton = (() => {
     let _mongoClient;
@@ -54,13 +53,10 @@ export const MongoSingleton = (() => {
 })();
 
 export async function connectToDB() {
-    
-    const testLibrary = {name: "Bobby"};
 
     try {
-        const books = await getBooks(testLibrary);
-        console.log("Connected successfully! Current books: ");
-        console.log(books);
+        const db = await MongoSingleton.getLibraryDB();
+        console.log(`Connected successfully to database '${db.databaseName}'`);
     } catch (e) {
         console.error(e);
     }
