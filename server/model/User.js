@@ -9,7 +9,7 @@ export default class User {
      */
     constructor(authId) {
 
-        this._id = null;
+        this._id = undefined;
         this.authId = authId;
         this.createdTime = new Date();
         
