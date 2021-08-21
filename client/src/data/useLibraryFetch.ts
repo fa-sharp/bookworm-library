@@ -1,10 +1,12 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useCallback, useEffect, useState } from "react";
+import Book from "../model/Book";
 import Library from "../model/Library";
+import useBookDBRequests from "./useBookDB";
+import useLibraryDBRequests from "./useLibraryDB";
 
 /**
  * Hook for fetching and manipulating user's libraries from server
- * @returns 
  */
 const useLibraryFetch = () => {
 
@@ -12,6 +14,9 @@ const useLibraryFetch = () => {
     const [token, setToken] = useState<string>();
 
     const [libraries, setLibraries] = useState<Library[]>();
+
+    const { fetchLibrariesDB, addLibraryDB, deleteLibraryDB } = useLibraryDBRequests(token);
+    const { addBookDB, deleteBookDB } = useBookDBRequests(token);
     const [fetchingError, setFetchingError] = useState(false);
 
     /** Get user's JWT token for Auth0 */
@@ -24,66 +29,68 @@ const useLibraryFetch = () => {
     }, [getAccessTokenSilently, isAuthenticated]);
 
 
-    /** Fetch the libraries from the server */
+    /** If there's a JWT token, fetch the libraries from the server */
     useEffect(() => {
         if (!token)
             return;
 
-        fetchLibraries(token)
-            .then(libraries => setLibraries(libraries))
+        fetchLibrariesDB()
+            .then(libraries => {
+                setLibraries(libraries);
+            })
             .catch(err => setFetchingError(true));
         
-    }, [token]);
+    }, [fetchLibrariesDB, token]);
 
     const addLibrary = useCallback((library: Library) => {
-        if (!token || !libraries)
+        if (!libraries)
             return;
         
-        addLibraryDB(token, library)
+        addLibraryDB(library)
             .then(newLibrary => setLibraries([...libraries, newLibrary]))
             .catch(err => setFetchingError(true));
 
-    }, [libraries, token])
+    }, [addLibraryDB, libraries]);
 
-    return { libraries, addLibrary };
-}
+    const deleteLibrary = useCallback((libraryToDelete: Library) => {
+        if (!libraries)
+            return;
 
-const fetchLibraries = async (token: string): Promise<Library[]> => {
-    try {
-        const response = await fetch('/api/user', {
-            headers: { Authorization: `Bearer ${token}`}
-        });
-        const { user: { libraries } } = await response.json();
-        return libraries;
-    } 
-    catch (err) {
-        console.error(err);
-        throw new Error("Error fetching libraries from database.");
-    }
-}
-
-const addLibraryDB = async (token: string, library: Library): Promise<Library> => {
-    try {
-        const response = await fetch('/api/library', 
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ library })
-        });
-        if (!response.ok)
-            throw new Error("Error adding library to database.");
+        deleteLibraryDB(libraryToDelete)
+            .then(success => setLibraries([...libraries.filter(library => library._id === libraryToDelete._id)]))
+            .catch(err => setFetchingError(true));
         
-        const { message, library: newLibrary } = await response.json();
-        console.log(message);
-        return newLibrary;
+    }, [deleteLibraryDB, libraries]);
 
-    } catch (err) {
-        console.error(err);
-        throw err;
-    }
+    
+
+    const addBook = useCallback((libraryIndex: number, book: Book) => {
+        if (!libraries)
+            return;
+
+        addBookDB(libraries[libraryIndex], book)
+            .then(newBook => {
+                const newLibraries = [...libraries];
+                newLibraries[libraryIndex].books.push(newBook);
+                setLibraries(newLibraries);
+            })
+            .catch(err => setFetchingError(true));
+    }, [addBookDB, libraries]);
+
+    const deleteBook = useCallback((libraryIndex: number, bookIndex: number) => {
+        if (!libraries)
+            return;
+
+        deleteBookDB(libraries[libraryIndex], libraries[libraryIndex].books[bookIndex])
+            .then(success => {
+                const newLibraries = [...libraries];
+                newLibraries[libraryIndex].books.splice(bookIndex, 1);
+                setLibraries(newLibraries);
+            })
+            .catch(err => setFetchingError(true));
+    }, [deleteBookDB, libraries])
+
+    return { libraries, addLibrary, deleteLibrary, addBook, deleteBook, fetchingError, };
 }
 
 export default useLibraryFetch;

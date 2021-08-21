@@ -10,6 +10,7 @@ export default class Book {
      */
     constructor(title, author, numPages, read) {
 
+        this._id = undefined;
         this.title = title;
         this.author = author;
         this.numPages = numPages;

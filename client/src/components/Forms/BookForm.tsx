@@ -38,12 +38,12 @@ const BookForm = ({ show, addBook, closeAddBookForm }: BookFormProps) => (
             }}
             validateOnChange={false}
             onSubmit={(values, { setSubmitting, resetForm }) => {
+                addBook(new Book(values.title, values.author, Number(values.numPages), values.read));
                 setTimeout(() => {
-                    addBook(new Book(values.title, values.author, Number(values.numPages), values.read));
                     resetForm();
                     setSubmitting(false);
                     closeAddBookForm();
-                }, 400);
+                }, 200);
             }}
         >
             {({ isSubmitting }) => (

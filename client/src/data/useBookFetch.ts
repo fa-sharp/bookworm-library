@@ -1,27 +1,25 @@
 import { useCallback, useEffect, useState } from "react";
 import Book from "../model/Book";
+import Library from "../model/Library";
 
 
-const useBookFetch = (libName: string | null) => {
+const useBookFetch = (library: Library | null) => {
 
     const [books, setBooks] = useState<Book[]>();
 
     useEffect(() => {
-        if (!libName)
+        if (!library)
             return;
 
-        fetch(`/books/${libName}`)
-        .then((res) => res.json())
-        .then((data) => setBooks(data.books))
-        .catch(console.error);
-    }, [libName]);
+        setBooks(library.books);
+    }, [library]);
 
     const addBook = useCallback((book: Book) => {
         if (!books) return;
 
         setBooks([...books, book]);
 
-        fetch(`/books/${libName}`,
+        fetch(`/books/${library}`,
             {
                 method: "POST",
                 headers: {
@@ -31,7 +29,7 @@ const useBookFetch = (libName: string | null) => {
             }
         ).then(res => res.json().then(console.log))
         .catch(err => console.error);
-    }, [books, libName]);
+    }, [books, library]);
 
     const deleteBook = useCallback((bookIndex: number) => {
         if (!books) return;
@@ -41,13 +39,13 @@ const useBookFetch = (libName: string | null) => {
 
         setBooks(newBooks);
 
-        fetch(`/books/${libName}/${bookIndex}`,
+        fetch(`/books/${library}/${bookIndex}`,
             {
                 method: "DELETE"
             })
         .then(res => res.json().then(console.log))
         .catch(err => console.error);
-    }, [books, libName]);
+    }, [books, library]);
 
     const toggleBookRead = useCallback((bookToUpdate: Book, bookIndex: number) => {
         if (!books) return;
@@ -58,7 +56,7 @@ const useBookFetch = (libName: string | null) => {
 
         setBooks(newBooks);
 
-        fetch(`/books/${libName}/${bookIndex}`,
+        fetch(`/books/${library}/${bookIndex}`,
             {
                 method: "PUT",
                 headers: {
@@ -68,7 +66,7 @@ const useBookFetch = (libName: string | null) => {
             })
         .then(res => res.json().then(console.log))
         .catch(err => console.error);
-    }, [books, libName]);
+    }, [books, library]);
 
     return { books, addBook, deleteBook, toggleBookRead }
 }

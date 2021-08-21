@@ -29,12 +29,12 @@ const LibraryForm = ({ show, addLibrary, closeLibraryForm }: LibraryFormProps) =
             }}
             validateOnChange={false}
             onSubmit={(values, { setSubmitting, resetForm }) => {
+                addLibrary(new Library(values.name));
                 setTimeout(() => {
-                    addLibrary(new Library(values.name));
                     resetForm();
                     setSubmitting(false);
                     closeLibraryForm();
-                }, 400);
+                }, 200);
             }}
         >
             {({ isSubmitting }) => (
