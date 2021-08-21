@@ -16,7 +16,7 @@ const useLibraryFetch = () => {
     const [libraries, setLibraries] = useState<Library[]>();
 
     const { fetchLibrariesDB, addLibraryDB, deleteLibraryDB } = useLibraryDBRequests(token);
-    const { addBookDB, deleteBookDB } = useBookDBRequests(token);
+    const { addBookDB, deleteBookDB, updateBookDB } = useBookDBRequests(token);
     const [fetchingError, setFetchingError] = useState(false);
 
     /** Get user's JWT token for Auth0 */
@@ -52,12 +52,16 @@ const useLibraryFetch = () => {
 
     }, [addLibraryDB, libraries]);
 
-    const deleteLibrary = useCallback((libraryToDelete: Library) => {
+    const deleteLibrary = useCallback((libraryIndex: number) => {
         if (!libraries)
             return;
 
-        deleteLibraryDB(libraryToDelete)
-            .then(success => setLibraries([...libraries.filter(library => library._id === libraryToDelete._id)]))
+        deleteLibraryDB(libraries[libraryIndex])
+            .then(success => {
+                const newLibraries = [...libraries];
+                newLibraries.splice(libraryIndex, 1);
+                setLibraries(newLibraries);
+            })
             .catch(err => setFetchingError(true));
         
     }, [deleteLibraryDB, libraries]);
@@ -88,9 +92,31 @@ const useLibraryFetch = () => {
                 setLibraries(newLibraries);
             })
             .catch(err => setFetchingError(true));
-    }, [deleteBookDB, libraries])
+    }, [deleteBookDB, libraries]);
 
-    return { libraries, addLibrary, deleteLibrary, addBook, deleteBook, fetchingError, };
+    const updateBook = useCallback((libraryIndex: number, bookIndex: number, updatedBook: Book) => {
+        if (!libraries)
+            return;
+        
+        // Update book in state, before sending request
+        const prevBook = libraries[libraryIndex].books[bookIndex];
+        const newLibraries = [...libraries];
+        newLibraries[libraryIndex].books[bookIndex] = updatedBook;
+        setLibraries(newLibraries);
+
+        updateBookDB(libraries[libraryIndex], updatedBook)
+            .then(success => {
+
+            })
+            .catch(err => { // if failed, revert the update
+                setFetchingError(true);
+                const newLibraries = [...libraries];
+                newLibraries[libraryIndex].books[bookIndex] = prevBook;
+                setLibraries(newLibraries);
+            });
+    }, [libraries, updateBookDB]);
+
+    return { libraries, addLibrary, deleteLibrary, addBook, deleteBook, updateBook, fetchingError };
 }
 
 export default useLibraryFetch;

@@ -1,0 +1,14 @@
+.libraryControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    margin-bottom: 1rem;
+
+    & > button {
+        all: unset;
+        cursor: pointer;
+        margin-inline: 4px;
+    }
+}

@@ -63,7 +63,34 @@ const useBookDBRequests = (token: string | undefined) => {
         }
     }, [token]);
 
-    return { addBookDB, deleteBookDB };
+    const updateBookDB = useCallback(async (library: Library, book: Book): Promise<boolean> => {
+        if (!token)
+            noTokenError();
+
+        try {
+            const response = await fetch(BOOK_API, 
+            {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ library: { _id: library._id }, book })
+            });
+            if (!response.ok)
+                throw new Error("Error updating book in database.");
+            
+            const { message } = await response.json();
+            console.log(message);
+            return true;
+    
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    }, [token]);
+
+    return { addBookDB, deleteBookDB, updateBookDB };
 }
 
 export default useBookDBRequests;

@@ -18,7 +18,7 @@ function App() {
             {!isLoading && 
                 !isAuthenticated ? 
                 <DemoLibrary />
-                : <LibraryApp user={user} />}
+                : <LibraryApp />}
         </div>
     );
 }

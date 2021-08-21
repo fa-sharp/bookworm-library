@@ -1,23 +1,26 @@
 import Book from "../../model/Book";
+import Library from "../../model/Library";
 import BookView from "./BookView";
 import styles from './library.module.scss';
 
 interface LibraryProps {
-    books: Book[]
+    library: Library
     deleteBook: (bookIndex: number) => void;
-    toggleBookRead: (bookToUpdate: Book, bookIndex: number) => void;
+    updateBook: (bookIndex: number, updatedBook: Book) => void;
     onClickAddBook: () => void
 }
 
-const LibraryView = ({ books, deleteBook, toggleBookRead, onClickAddBook }: LibraryProps) => {
+const LibraryView = ({ library, deleteBook, updateBook, onClickAddBook }: LibraryProps) => {
+
+    const { books } = library;
 
     return (
         <section className={styles.library}>
             {books.map((book, index) =>
                 <BookView 
                     book={book}
-                    key={`${book.author}${book.title}`}
-                    onChangeRead={(read) => toggleBookRead(book, index)} 
+                    key={book._id}
+                    onChangeRead={(read) => updateBook(index, {...book, read: read})} 
                     onDeleteBook={() => deleteBook(index)} />
             )}
             {books.length === 0 && "No books yet! Add one now ===>"}
