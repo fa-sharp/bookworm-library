@@ -23,7 +23,6 @@ function cleanUp() {
 }
 process.on('SIGINT', cleanUp());
 process.on('SIGTERM', cleanUp());
-process.on('exit', cleanUp());
 
 // Create API routes
 userRoutes(app);
