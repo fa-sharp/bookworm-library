@@ -24,7 +24,7 @@ const LibraryApp = () => {
             setCurrentLibraryIndex(libIndexToDelete - 1);
         deleteLibrary(libIndexToDelete);
     }, [currentLibraryIndex, deleteLibrary, libraries]);
-    console.count("Rendering");
+
     return (
         <main className={styles.mainLibraryApp}>
             {!libraries ? "Loading..." :
