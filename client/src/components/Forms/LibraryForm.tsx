@@ -1,36 +1,35 @@
 import { Formik, Form, Field, ErrorMessage, FormikErrors } from 'formik';
-import { useMemo } from 'react';
+import { useEffect } from 'react';
+import { useMemo, useRef } from 'react';
 import Library from '../../model/Library';
 import styles from './forms.module.scss'
 
-interface CommonProps {
-    show: boolean;
+interface LibraryFormProps {
+    options: LibraryFormOptions;
+    addLibrary: (newLibrary: Library) => void;
+    updateLibrary: (updatedLibrary: Library) => void;
     closeLibraryForm: () => void;
 }
 
-type TruncateProps =
-    | {
-        mode: 'UPDATE';
-        libraryToUpdate: Library;
-        updateLibrary: (updatedLibrary: Library) => void;
-        addLibrary?: never;
-    }
-    | {
-        mode: 'ADD';
-        addLibrary: (library: Library) => void;
-        libraryToUpdate?: never;
-        updateLibrary?: never;
-    }
-
-type LibraryFormProps = CommonProps & TruncateProps;
+export interface LibraryFormOptions {
+    mode: 'UPDATE' | 'ADD';
+    show: boolean;
+    libraryToUpdate?: Library;
+}
 
 interface LibraryFormValues {
     name: string;
 }
 
-const LibraryForm = ({ mode = 'ADD', show, libraryToUpdate, addLibrary, updateLibrary, closeLibraryForm }: LibraryFormProps) => {
+const LibraryForm = ({ options: {mode = 'ADD', show, libraryToUpdate }, addLibrary, updateLibrary, closeLibraryForm }: LibraryFormProps) => {
 
     const initialValues: LibraryFormValues = useMemo(() => mode === 'ADD' ? { name: '' } : { name: libraryToUpdate!.name }, [libraryToUpdate, mode]);
+    const nameFieldRef = useRef<HTMLInputElement>();
+
+    useEffect(() => {
+        if (nameFieldRef.current && show)
+            nameFieldRef.current.focus();
+    }, [show]);
 
     return (
         <div className={styles.formContainer + (show ? ` ${styles.show}` : '')}>
@@ -48,10 +47,10 @@ const LibraryForm = ({ mode = 'ADD', show, libraryToUpdate, addLibrary, updateLi
                 }}
                 validateOnChange={false}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    if (mode === "ADD" && addLibrary)
+                    if (mode === "ADD")
                         addLibrary(new Library(values.name));
                     else {
-                        if (!libraryToUpdate || !updateLibrary) {
+                        if (!libraryToUpdate) {
                             console.error("No library object provided to update!");
                             return;
                         }
@@ -68,7 +67,7 @@ const LibraryForm = ({ mode = 'ADD', show, libraryToUpdate, addLibrary, updateLi
                     <Form className={styles.form}>
                         <h3>{mode === "ADD" ? 'Add a library 📚' : 'Update library 📚'}</h3>
 
-                        <Field name="name" type="text" placeholder="Library Name" className={styles.field} />
+                        <Field name="name" type="text" innerRef={nameFieldRef} placeholder="Library Name" className={styles.field} />
                         <ErrorMessage name="name" component="div" className={styles.error} />
 
                         <button type="submit" disabled={isSubmitting}>

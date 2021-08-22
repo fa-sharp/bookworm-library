@@ -6,7 +6,7 @@ import DemoLibrary from './components/Main/DemoLibrary';
 
 function App() {
 
-    const { user, isAuthenticated, isLoading } = useAuth0();
+    const { isAuthenticated, isLoading } = useAuth0();
 
     return (
         <div className="App">
