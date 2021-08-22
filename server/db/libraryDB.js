@@ -6,25 +6,6 @@ const USER_COLLECTION = 'users';
 
 /**
  * 
- * @param {string} authId The unique (hopefully) ID corresponding to the auth0 authentication
- * @returns {Promise<Library[] | null>}
- */
-export async function getLibraries(authId) {
-
-    const db = await MongoSingleton.getLibraryDB();
-
-    try {
-        const { libraries } = await db.collection(USER_COLLECTION)
-                                    .findOne({authId});
-        return libraries;
-    } catch (e) {
-        console.error(e);
-        return null;
-    }
-}
-
-/**
- * 
  * @param {sting} authId The auth0 id of the user
  * @param {Library} library the new library (_id will be added)
  * @returns {Promise<Library | null>} the new library, with added _id, or null if there was a DB error

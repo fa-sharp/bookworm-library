@@ -1,4 +1,4 @@
-import { addLibrary, deleteLibrary, getLibraries, updateLibraryName } from "../db/libraryDB.js";
+import { addLibrary, deleteLibrary, updateLibraryName } from "../db/libraryDB.js";
 import { validateJWT } from "../auth/auth0.js";
 
 /**

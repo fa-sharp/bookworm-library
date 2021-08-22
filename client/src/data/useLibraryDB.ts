@@ -7,10 +7,10 @@ const useLibraryDBRequests = (token: string | undefined) => {
 
 
     const fetchLibrariesDB = useCallback(async (): Promise<Library[]> => {
-        if (!token)
-            noTokenError();
-
         try {
+            if (!token)
+                noTokenError();
+
             const response = await fetch('/api/user', {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -24,10 +24,10 @@ const useLibraryDBRequests = (token: string | undefined) => {
     }, [token]);
 
     const addLibraryDB = useCallback(async (library: Library): Promise<Library> => {
-        if (!token)
-            noTokenError();
-
         try {
+            if (!token)
+                noTokenError();
+
             const response = await fetch('/api/library', 
             {
                 method: "POST",
@@ -50,11 +50,39 @@ const useLibraryDBRequests = (token: string | undefined) => {
         }
     }, [token]);
 
-    const deleteLibraryDB = useCallback(async (library: Library): Promise<boolean> => {
-        if (!token)
-            noTokenError();
-        
+    /** Updates only the name of the library */
+    const updateLibraryDB = useCallback(async (library: Library): Promise<boolean> => {
         try {
+            if (!token)
+                noTokenError();
+
+            const response = await fetch('/api/library', 
+            {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ library: { _id: library._id, name: library.name } })
+            });
+            if (!response.ok)
+                throw new Error("Error updating library in database.");
+            
+            const { message } = await response.json();
+            console.log(message);
+            return true;
+    
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    }, [token]);
+
+    const deleteLibraryDB = useCallback(async (library: Library): Promise<boolean> => {
+        try {
+            if (!token)
+                noTokenError();
+
             const response = await fetch('/api/library', 
             {
                 method: "DELETE",
@@ -77,7 +105,7 @@ const useLibraryDBRequests = (token: string | undefined) => {
         }
     }, [token]);
 
-    return { fetchLibrariesDB, addLibraryDB, deleteLibraryDB }
+    return { fetchLibrariesDB, addLibraryDB, updateLibraryDB, deleteLibraryDB }
 }
 
 export default useLibraryDBRequests;

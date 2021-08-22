@@ -15,7 +15,7 @@ const useLibraryFetch = () => {
 
     const [libraries, setLibraries] = useState<Library[]>();
 
-    const { fetchLibrariesDB, addLibraryDB, deleteLibraryDB } = useLibraryDBRequests(token);
+    const { fetchLibrariesDB, addLibraryDB, updateLibraryDB, deleteLibraryDB } = useLibraryDBRequests(token);
     const { addBookDB, deleteBookDB, updateBookDB } = useBookDBRequests(token);
     const [fetchingError, setFetchingError] = useState(false);
 
@@ -51,6 +51,18 @@ const useLibraryFetch = () => {
             .catch(err => setFetchingError(true));
 
     }, [addLibraryDB, libraries]);
+
+    const updateLibrary = useCallback((libraryIndex: number, updatedLibrary: Library) => {
+        if (!libraries)
+            return;
+
+        updateLibraryDB(updatedLibrary)
+            .then(success => {
+                const newLibraries = Object.assign([], libraries, {[libraryIndex]: updatedLibrary});
+                setLibraries(newLibraries);
+            })
+            .catch(err => setFetchingError(true));
+    }, [libraries, updateLibraryDB])
 
     const deleteLibrary = useCallback((libraryIndex: number) => {
         if (!libraries)
@@ -116,7 +128,7 @@ const useLibraryFetch = () => {
             });
     }, [libraries, updateBookDB]);
 
-    return { libraries, addLibrary, deleteLibrary, addBook, deleteBook, updateBook, fetchingError };
+    return { libraries, addLibrary, deleteLibrary, updateLibrary, addBook, deleteBook, updateBook, fetchingError };
 }
 
 export default useLibraryFetch;
