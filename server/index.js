@@ -17,10 +17,13 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 connectToDB().catch(console.error);
 
 // Close MongoDB connection on exit
-process.on('SIGINT', function() {
+function cleanUp() {
     console.log('Closing database connection..');
     closeDBConnection().then(() => process.exit());
-});
+}
+process.on('SIGINT', cleanUp());
+process.on('SIGTERM', cleanUp());
+process.on('exit', cleanUp());
 
 // Create API routes
 userRoutes(app);
