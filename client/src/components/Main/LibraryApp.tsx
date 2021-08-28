@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useState } from 'react'
 import useLibraryFetch from '../../data/useLibraryFetch';
 import { BookForm, LibraryForm } from '../Forms';
+import { BookFormOptions } from '../Forms/BookForm';
 import { LibraryFormOptions } from '../Forms/LibraryForm';
 import LibraryView from '../Library/LibraryView';
 import styles from './libraryapp.module.scss'
@@ -14,7 +15,7 @@ const LibraryApp = () => {
     // the library currently in view (default: first library)
     const [currentLibraryIndex, setCurrentLibraryIndex] = useState(0);
 
-    const [showBookForm, setShowBookForm] = useState(false);
+    const [bookFormOptions, setBookFormOptions] = useState<BookFormOptions>({ show: false, mode: 'ADD' });
     const [libraryFormOptions, setLibraryFormOptions] = useState<LibraryFormOptions>({ show: false, mode: 'ADD'});
 
     /** Called when deleting library. Sets the next library back into view (or the previous one, if the last library is deleted) */
@@ -30,9 +31,10 @@ const LibraryApp = () => {
             {!libraries ? "Loading..." :
             <>
                 <BookForm
-                    show={showBookForm}
+                    options={bookFormOptions}
                     addBook={(book) => addBook(currentLibraryIndex, book)}
-                    closeAddBookForm={() => setShowBookForm(false)} />
+                    updateBook={(bookIndex, updatedBook) => updateBook(currentLibraryIndex, bookIndex, updatedBook)}
+                    closeBookForm={() => setBookFormOptions({show: false, mode: 'ADD'})} />
                 <LibraryForm
                     options={libraryFormOptions}
                     addLibrary={addLibrary}
@@ -66,7 +68,9 @@ const LibraryApp = () => {
                     library={libraries[currentLibraryIndex]}
                     updateBook={(bookIndex, updatedBook) => updateBook(currentLibraryIndex, bookIndex, updatedBook)}
                     deleteBook={(bookIndex) => deleteBook(currentLibraryIndex, bookIndex)}
-                    onClickAddBook={() => setShowBookForm(true)} />
+                    onClickAddBook={() => setBookFormOptions({ mode: "ADD", show: true })}
+                    onClickEditBook={(bookIndex, bookToUpdate) =>
+                        setBookFormOptions({ mode: "UPDATE", show: true, bookToUpdateIndex: bookIndex, bookToUpdate })} />
             </>}
         </main>
     )

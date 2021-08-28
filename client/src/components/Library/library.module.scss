@@ -28,21 +28,20 @@
 
 .book {
 
-    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
     text-align: center;
 
-    width: 125px;
-    min-height: 140px;
+    width: 130px;
+    min-height: 150px;
 
     border-radius: 10px;
     box-shadow: 4px 4px 3px 1px;
 
     margin: calc(min(2%, 16px));
-    padding: 4px;
+    padding: 5px 3px 2px;
 
     background-color: #ffe082;
     transition: background-color .5s ease;
@@ -51,40 +50,59 @@
         background-color: #d2d2d2;
     }
 
-    h3 {
-        margin-block: 0;
-        font-size: 1rem;
-    }
+    & > .bookMain {
 
-    .readField {
+        flex: 1;
+        
         display: flex;
-        gap: 4px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+
+        & > h3 {
+            margin-block: 0;
+            font-size: 1rem;
+        }
+    
+        & > .readField {
+            display: flex;
+            gap: 4px;
+        }
     }
 
-    .deleteButton {
-        all: initial;
-        position: absolute;
-        bottom: 4px;
-        right: 4px;
+    & > .bookControls {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0 2px;
 
-        height: 1rem;
-        width: 1rem;
+        button {
+            all: initial;
+            cursor: pointer;
 
-        font-size: .9rem;
-        color: #595959;
-        text-align: center;
-        line-height: 0;
+            height: 1rem;
+            width: 1rem;
 
-        border: dotted 1px #595959;
-        border-radius: 50%;
-        padding: 1px;
+            font-size: .9rem;
+            color: #7e7e7e;
+            text-align: center;
+            line-height: 0;
 
-        cursor: pointer;
+            border: dotted 1px #595959;
+            border-radius: 50%;
+            padding: 2px;
 
-        &:hover, &:active, &:focus {
-            border: solid black 1px;
-            background-color: #f06292;
-            color: black;
+
+            &:hover, &:active, &:focus {
+                border: solid black 1px;
+                color: black;
+            }
+        }
+
+        #deleteButton {
+            &:hover, &:active, &:focus {
+                background-color: #f06292;
+            }
         }
     }
 }

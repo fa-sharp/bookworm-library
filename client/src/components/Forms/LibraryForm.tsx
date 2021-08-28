@@ -1,6 +1,6 @@
 import { Formik, Form, Field, ErrorMessage, FormikErrors } from 'formik';
 import { useEffect } from 'react';
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import Library from '../../model/Library';
 import styles from './forms.module.scss'
 
@@ -21,11 +21,16 @@ interface LibraryFormValues {
     name: string;
 }
 
-const LibraryForm = ({ options: {mode = 'ADD', show, libraryToUpdate }, addLibrary, updateLibrary, closeLibraryForm }: LibraryFormProps) => {
+const LibraryForm = ({ options: { mode = 'ADD', show, libraryToUpdate }, addLibrary, updateLibrary, closeLibraryForm }: LibraryFormProps) => {
 
-    const initialValues: LibraryFormValues = useMemo(() => mode === 'ADD' ? { name: '' } : { name: libraryToUpdate!.name }, [libraryToUpdate, mode]);
+    let initialValues: LibraryFormValues;
+    if (mode === 'ADD' || show === false || !libraryToUpdate)
+        initialValues =  { name: '' }
+    else
+        initialValues = { name: libraryToUpdate.name };
+
+    // Auto-focus cursor on name field
     const nameFieldRef = useRef<HTMLInputElement>();
-
     useEffect(() => {
         if (nameFieldRef.current && show)
             nameFieldRef.current.focus();

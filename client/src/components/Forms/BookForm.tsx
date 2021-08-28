@@ -1,11 +1,20 @@
 import { Formik, Form, Field, ErrorMessage, FormikErrors } from 'formik';
+import { useEffect, useRef } from 'react';
 import Book from '../../model/Book';
 import styles from './forms.module.scss'
 
 interface BookFormProps {
-    show: boolean;
+    options: BookFormOptions;
     addBook: (book: Book) => void;
-    closeAddBookForm: () => void;
+    updateBook: (bookIndex: number, book: Book) => void;
+    closeBookForm: () => void;
+}
+
+export interface BookFormOptions {
+    mode: 'UPDATE' | 'ADD';
+    show: boolean;
+    bookToUpdate?: Book;
+    bookToUpdateIndex?: number;
 }
 
 interface BookFormValues {
@@ -15,12 +24,29 @@ interface BookFormValues {
     read: boolean;
 }
 
-const initialValues: BookFormValues = {title: '', author: '', numPages: '', read: false};
 
-const BookForm = ({ show, addBook, closeAddBookForm }: BookFormProps) => (
+
+const BookForm = ({ options: { mode, show, bookToUpdate, bookToUpdateIndex }, addBook, updateBook, closeBookForm }: BookFormProps) => {
+
+    let initialValues: BookFormValues;
+    if (mode === 'ADD' || show === false || !bookToUpdate)
+        initialValues =  { title: '', author: '', numPages: 'NaN', read: false }
+    else
+        initialValues = { title: bookToUpdate.title, author: bookToUpdate.author, numPages: bookToUpdate.numPages.toString(), read: bookToUpdate.read }
+
+    // Auto-focus cursor on name field
+    const nameFieldRef = useRef<HTMLInputElement>();
+    useEffect(() => {
+        if (nameFieldRef.current && show)
+            nameFieldRef.current.focus();
+    }, [show]);
+
+
+    return (
     <div className={styles.formContainer + (show ? ` ${styles.show}` : '')}>
         <Formik
             initialValues={initialValues}
+            enableReinitialize={true}
             validate={values => {
                 const errors: FormikErrors<BookFormValues> = {};
 
@@ -38,19 +64,30 @@ const BookForm = ({ show, addBook, closeAddBookForm }: BookFormProps) => (
             }}
             validateOnChange={false}
             onSubmit={(values, { setSubmitting, resetForm }) => {
-                addBook(new Book(values.title, values.author, Number(values.numPages), values.read));
+                const { title, author, numPages, read } = values;
+
+                if (mode === "ADD")
+                    addBook(new Book(title, author, Number(numPages), read));
+                else {
+                    if (!bookToUpdate || !bookToUpdateIndex) {
+                        console.error("Error updating book: Invalid bookToUpdate object!");
+                        return;
+                    }
+                    updateBook(bookToUpdateIndex, { ...bookToUpdate, ...values, numPages: Number(numPages)});
+                }
+
                 setTimeout(() => {
                     resetForm();
                     setSubmitting(false);
-                    closeAddBookForm();
+                    closeBookForm();
                 }, 200);
             }}
         >
             {({ isSubmitting }) => (
                 <Form className={styles.form}>
-                     <h3>Add a book 📖</h3>
+                     <h3>{mode === "ADD" ? 'Add a book 📖' : 'Edit book 📖'}</h3>
 
-                    <Field name="title" type="text" placeholder="Title" className={styles.field} />
+                    <Field name="title" type="text" innerRef={nameFieldRef} placeholder="Title" className={styles.field} />
                     <ErrorMessage name="title" component="div" className={styles.error} />
 
                     <Field  name="author" type="text" placeholder="Author" className={styles.field} />
@@ -66,15 +103,15 @@ const BookForm = ({ show, addBook, closeAddBookForm }: BookFormProps) => (
                     </div>
                     
                     <button type="submit" disabled={isSubmitting}>
-                        Add
+                        {mode === "ADD" ? 'Add' : 'Update'}
                     </button>
-                    <button type="reset" disabled={isSubmitting} onClick={closeAddBookForm}>
+                    <button type="reset" disabled={isSubmitting} onClick={closeBookForm}>
                         Cancel
                     </button>
                 </Form>
             )}
         </Formik>
-    </div>
-);
+    </div>)
+}
 
 export default BookForm;

@@ -7,10 +7,11 @@ interface LibraryProps {
     library: Library
     deleteBook: (bookIndex: number) => void;
     updateBook: (bookIndex: number, updatedBook: Book) => void;
-    onClickAddBook: () => void
+    onClickAddBook: () => void;
+    onClickEditBook: (bookIndex: number, bookToUpdate: Book) => void;
 }
 
-const LibraryView = ({ library, deleteBook, updateBook, onClickAddBook }: LibraryProps) => {
+const LibraryView = ({ library, deleteBook, updateBook, onClickAddBook, onClickEditBook }: LibraryProps) => {
 
     const { books } = library;
     const numBooksRead = books.reduce((numRead, book) => book.read ? numRead + 1 : numRead, 0);
@@ -23,7 +24,8 @@ const LibraryView = ({ library, deleteBook, updateBook, onClickAddBook }: Librar
                         book={book}
                         key={book._id}
                         onChangeRead={(read) => updateBook(index, {...book, read: read})}
-                        onDeleteBook={() => deleteBook(index)} />
+                        onDeleteBook={() => deleteBook(index)}
+                        onEditBook={() => onClickEditBook(index, book)} />
                 )}
                 {books.length === 0 && "No books yet! Add one now ===>"}
                 <button onClick={onClickAddBook} className={styles.addBookButton} aria-label="Add a book" title="Add a book">
