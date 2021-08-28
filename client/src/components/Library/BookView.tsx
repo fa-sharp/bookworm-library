@@ -31,7 +31,7 @@ const BookView = ({ book, onChangeRead, onDeleteBook, onEditBook }: Props) => {
                 <button onClick={onEditBook} title="Edit book" aria-label="Edit book">
                     <i className="far fa-edit" />
                 </button>
-                <button id={styles.deleteButton} onClick={onDeleteBook} aria-label="Delete book">
+                <button id={styles.deleteButton} onClick={onDeleteBook} title="Delete book" aria-label="Delete book">
                     <i className="far fa-trash-alt" />
                 </button>
             </div>

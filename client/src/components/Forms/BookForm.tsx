@@ -30,7 +30,7 @@ const BookForm = ({ options: { mode, show, bookToUpdate, bookToUpdateIndex }, ad
 
     let initialValues: BookFormValues;
     if (mode === 'ADD' || show === false || !bookToUpdate)
-        initialValues =  { title: '', author: '', numPages: 'NaN', read: false }
+        initialValues =  { title: '', author: '', numPages: '', read: false }
     else
         initialValues = { title: bookToUpdate.title, author: bookToUpdate.author, numPages: bookToUpdate.numPages.toString(), read: bookToUpdate.read }
 
