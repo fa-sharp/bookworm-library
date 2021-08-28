@@ -1,5 +1,7 @@
 # Bookworm Library App
-An app that lets you keep track of the books you're reading. Inspired by this [Odin Project assignment](https://www.theodinproject.com/paths/full-stack-javascript/courses/javascript/lessons/library). This is my first full-stack application :)
+An app that lets you keep track of the books you're reading. Inspired by an [Odin Project assignment](https://www.theodinproject.com/paths/full-stack-javascript/courses/javascript/lessons/library). This is my first full-stack application :)
+
+![Demo image showing a sample library](/demo.png)
 
 ## Features
 - Client side: Add/edit/delete books, switch between different "shelves" or libraries
@@ -9,7 +11,7 @@ An app that lets you keep track of the books you're reading. Inspired by this [O
 - Icons from Font Awesome
 
 ### Stack / Technologies used
-- Server: Express
+- Server: Node.js and Express
 - Database: MongoDB
 - Client: React and Typescript
 - Authentication: Auth0
@@ -18,7 +20,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ---
 ## Setup/build
-You will need to first setup MongoDB and Auth0 for this app to work.\(todo)
+You will need to first setup MongoDB and Auth0, as well as the relevant Environment Variables:
+
+(todo)
 
 Then, you can run the following scripts.
 
