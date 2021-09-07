@@ -69,7 +69,7 @@ const BookForm = ({ options: { mode, show, bookToUpdate, bookToUpdateIndex }, ad
                 if (mode === "ADD")
                     addBook(new Book(title, author, Number(numPages), read));
                 else {
-                    if (!bookToUpdate || !bookToUpdateIndex) {
+                    if (!bookToUpdate || bookToUpdateIndex == null) {
                         console.error("Error updating book: Invalid bookToUpdate object!");
                         return;
                     }
